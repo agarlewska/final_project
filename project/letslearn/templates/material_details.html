@@ -1,0 +1,17 @@
+{%  extends 'base.html' %}
+
+{%  block content %}
+    <p><b>Name: </b>{{ material.name }}</p>
+    <p><b>Description: </b>{{ material.description }}</p>
+    <p><b>Author: </b>{{ material.author }}</p>
+    <p><b>Platform: </b>{{ material.platform }}</p>
+    <p><b>URL: </b>{{ material.url }}</p>
+    <p><b>Is time limited: </b>{{ material.time_limited }}</p>
+    <p><b>Expiration date: </b>{{ material.expiration_date }}</p>
+    <p><b>Is finished: </b>{{ material.is_finished }}</p>
+    <p><b>Comments </b>{{ material.comments }}</p>
+    <p><b>Expected study time: </b>{{ material.exp_study_time }}h</p>
+    <p><b>Category: </b>{{ material.category }}</p>
+    <p><b>Material type: </b>{{ material.material_type }}</p>
+
+{% endblock %}

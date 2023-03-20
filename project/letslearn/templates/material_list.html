@@ -1,0 +1,14 @@
+{%  extends 'base.html' %}
+
+{%  block content %}
+  <h2>Your training materials</h2>
+      <ul>
+          {% for material in object_list %}
+              <li>
+                  <a href="{% url 'material_details' material_id=material.material_id.id %}">
+                      {{ material.material_id }}</a>
+              </li>
+          {% endfor %}
+      </ul>
+
+{% endblock %}
