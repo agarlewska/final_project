@@ -1,17 +1,44 @@
 {%  extends 'base.html' %}
 
 {%  block content %}
+    {% if material.is_archived %}
+        <p style="color: blueviolet"><b>Material has been archived </b></p>
+    {% endif %}
     <p><b>Name: </b>{{ material.name }}</p>
     <p><b>Description: </b>{{ material.description }}</p>
     <p><b>Author: </b>{{ material.author }}</p>
     <p><b>Platform: </b>{{ material.platform }}</p>
-    <p><b>URL: </b>{{ material.url }}</p>
-    <p><b>Is time limited: </b>{{ material.time_limited }}</p>
+    <p><b>WWW: </b>{{ material.www }}</p>
+    <p><b>Is time limited: </b>{{ material.is_time_limited }}</p>
+        {% if material.time_limited  == True %}
     <p><b>Expiration date: </b>{{ material.expiration_date }}</p>
-    <p><b>Is finished: </b>{{ material.is_finished }}</p>
-    <p><b>Comments </b>{{ material.comments }}</p>
-    <p><b>Expected study time: </b>{{ material.exp_study_time }}h</p>
-    <p><b>Category: </b>{{ material.category }}</p>
-    <p><b>Material type: </b>{{ material.material_type }}</p>
+        {% endif %}
+    <p><b>Is finished: </b>{{ material.is_finished }}
+            <form action="" method="POST">
+                {% csrf_token %}
+                {% if material.is_finished %}
+                    <input type="submit" name="unfinished" value="check as unfinished">
+                {% else %}
+                    <input type="submit" name="finished" value="check as finished">
+                {% endif %}
+            </form>
+    </p>
+    <p><b>Comments </b>{{ material.comment }}</p>
+    <p><b>Expected study time: </b>{{ material.expected_study_time }}h</p>
+    <p><b>Category:</b> </p>
+        <ul>
+            {% for cat in material.category.all %}
+            <li> {{ cat }} </li>
+            {% endfor %}
+        </ul>
 
+    <p><b>Material type: </b>{{ material.material_type }}</p>
+    <form action='' method="POST">
+        {% csrf_token %}
+        {% if material.is_archived %}
+            <input type="submit" name="restore" value="restore">
+        {% else %}
+            <input type="submit" name="archive" value="archive">
+        {% endif %}
+    </form>
 {% endblock %}

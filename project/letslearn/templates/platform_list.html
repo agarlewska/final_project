@@ -1,0 +1,14 @@
+{%  extends 'base.html' %}
+
+{%  block content %}
+  <h2>Platforms</h2>
+      <ul>
+          {% for platform in object_list %}
+              <li>
+                  <a href="{% url 'platform_details' platform_id=platform.id %}">
+                      {{ platform}}</a>
+              </li>
+          {% endfor %}
+      </ul>
+
+{% endblock %}
