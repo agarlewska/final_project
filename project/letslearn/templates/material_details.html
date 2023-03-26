@@ -10,7 +10,7 @@
     <p><b>Platform: </b>{{ material.platform }}</p>
     <p><b>WWW: </b>{{ material.www }}</p>
     <p><b>Is time limited: </b>{{ material.is_time_limited }}</p>
-        {% if material.time_limited  == True %}
+        {% if material.is_time_limited  == True %}
     <p><b>Expiration date: </b>{{ material.expiration_date }}</p>
         {% endif %}
     <p><b>Is finished: </b>{{ material.is_finished }}
