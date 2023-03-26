@@ -2,10 +2,14 @@ from django.urls import path
 
 from .views import IndexView, MaterialListView, MaterialDetailView, PlatformCreateView, PlatformListView, \
     PlatformDetailView, MaterialCreateView, CategoryListView, CategoryCreateView, MaterialCategoryListView, \
-    AuthorListView, AuthorDetailView, AuthorCreateView
+    AuthorListView, AuthorDetailView, AuthorCreateView, SignUpView, LogInView, LogOutView, ProfileView
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
+    path('accounts/signup/', SignUpView.as_view(), name='signup'),
+    path('accounts/login/', LogInView.as_view(), name='login'),
+    path('accounts/profile/', ProfileView.as_view(), name='login_profile'),
+    path('accounts/logout/', LogOutView.as_view(), name='logout'),
     path('materials/list/', MaterialListView.as_view(), name='material_list'),
     path('materials/<int:material_id>/', MaterialDetailView.as_view(), name='material_details'),
     path('materials/create/', MaterialCreateView.as_view(), name='material_create'),

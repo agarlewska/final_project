@@ -1,8 +1,14 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView, LogoutView
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.views.generic import ListView, CreateView
 from .models import UserMaterial, TrainingMaterials, Platform, Category, Author
+from django.core.paginator import Paginator
+from django.contrib.auth import authenticate, login, logout
 
 
 class IndexView(View):
@@ -12,14 +18,23 @@ class IndexView(View):
         return render(request, 'index.html', context)
 
 
-class MaterialListView(ListView):
+class MaterialListView(LoginRequiredMixin, ListView):
     template_name = 'material_list.html'
-    paginate_by = 10
 
     def get_queryset(self):
         all_materials = UserMaterial.objects.filter(user_id=self.request.user)
         return [material for material in all_materials if material.material_id.is_archived is False]
 #       return UserMaterial.objects.filter(Q(user_id=self.request.user) & Q(is_archived=False))
+# def planlist(request):
+#     plans = Plan.objects.all().order_by('name')
+#     p = Paginator(plans, 50)
+#     page = request.GET.get('page')
+#     plans_list = p.get_page(page)
+#     nums = "a" * plans_list.paginator.num_pages
+#     if request.method == 'GET':
+#         template = loader.get_template('app-schedules.html')
+#         context = {'plans': plans, 'plans_list': plans_list, 'nums': nums}
+#         return HttpResponse(template.render(context, request))
 
 
 class MaterialDetailView(View):
@@ -107,3 +122,51 @@ class AuthorCreateView(CreateView):
         self.object = form.save()
         new_id = self.object.id
         return redirect(f"/author/{ new_id }/")
+
+
+class SignUpView(View):
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect(f"/materials/list/")
+
+    def get(self, request):
+        form = UserCreationForm()
+        return render(request, 'sign_up.html', {'form': form})
+
+
+class LogInView(LoginView):
+    template_name = 'login_form.html'
+    # next_page = 'material_list'
+    login_redirect_url = 'material_list'
+    #redirect_authenticated_user = True  # czy po zalogowaniu użytkownik ma zostać przekierowany
+    # def get(self, request):
+    #     form = self.form_class()
+    #     message = ''
+    #     return render(request, self.template_name, context={'form': form, 'message': message})
+    #
+    # def post(self, request):
+    #     form = self.form_class(request.POST)
+    #     if form.is_valid():
+    #         user = authenticate(
+    #             username=form.cleaned_data['username'],
+    #             password=form.cleaned_data['password'],
+    #         )
+    #         if user is not None:
+    #             login(request, user)
+    #             return redirect('home')
+    #     message = 'Login failed!'
+    #     return render(request, self.template_name, context={'form': form, 'message': message})
+
+class LogOutView(LogoutView):
+    next_page = 'index'    #url na który zostanie przekierowany zalogowany uzytkownik
+    # redirect_authenticated_user = True   # czy po zalogowaniu użytkownik ma zostać przekierowany
+
+class ProfileView(View):
+    def get(self, request):
+        return redirect(f"/materials/list/")
