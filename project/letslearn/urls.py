@@ -3,7 +3,7 @@ from django.urls import path
 from .views import IndexView, MaterialListView, MaterialDetailView, PlatformCreateView, PlatformListView, \
     PlatformDetailView, MaterialCreateView, CategoryListView, CategoryCreateView, MaterialCategoryListView, \
     AuthorListView, AuthorDetailView, AuthorCreateView, SignUpView, LogInView, LogOutView, ProfileView, \
-    PlatformUpdateView
+    PlatformUpdateView, AuthorUpdateView
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
@@ -25,4 +25,5 @@ urlpatterns = [
     path('author/list/', AuthorListView.as_view(), name='author_list'),  #to chyba bez sensu
     path('author/<int:pk>/', AuthorDetailView.as_view(), name='author_details'),
     path('author/create/', AuthorCreateView.as_view(), name='author_create'),
+    path('author/update/<int:pk>/', AuthorUpdateView.as_view(), name='author_update'),
 ]

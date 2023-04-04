@@ -190,7 +190,14 @@ class PlatformUpdateView(UpdateView):
     fields = '__all__'
  #   template_name_suffix = '_update_form'
     template_name = "letslearn/platform_update_form.html"
-    success_url = 'platform/list/'
+    success_url = '/platform/list/'
 
     # def get_object(self, queryset=None):
     #     return Platform.objects.get(pk=self.request.GET.get('pk'))
+
+class AuthorUpdateView(UpdateView):
+    model = Author
+    fields = '__all__'
+ #   template_name_suffix = '_update_form'
+    template_name = "letslearn/author_update_form.html"
+    success_url = '/author/list/'

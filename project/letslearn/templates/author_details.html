@@ -4,5 +4,5 @@
     <p><b>Name: </b>{{ author.name }}</p>
     <p><b>Information: </b>{{ author.information }}</p>
     <p><b>Comment </b>{{ author.comment }}</p>
-
+    <a href="{% url 'author_update' author.id %}">Edit</a>
 {% endblock %}
