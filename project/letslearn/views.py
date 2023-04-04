@@ -5,7 +5,9 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView,  UpdateView
+
+#from .forms import PlatformForm
 from .models import UserMaterial, TrainingMaterials, Platform, Category, Author
 from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout
@@ -38,12 +40,12 @@ class MaterialListView(LoginRequiredMixin, ListView):
 
 
 class MaterialDetailView(View):
-        def get(self, request, material_id):
-            material = get_object_or_404(TrainingMaterials, id=material_id)
+        def get(self, request, pk):
+            material = get_object_or_404(TrainingMaterials, id=pk)
             return render(request, "material_details.html", {"material": material})
 
-        def post(self, request, material_id):
-            material = get_object_or_404(TrainingMaterials, id=material_id)
+        def post(self, request, pk):
+            material = get_object_or_404(TrainingMaterials, id=pk)
             if 'finished' in request.POST:
                 material.is_finished = True
             elif 'unfinished' in request.POST:
@@ -67,7 +69,7 @@ class MaterialCreateView(CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        UserMaterial.objects.create(material_id = self.object, user_id =self.request.user)
+        UserMaterial.objects.create(material_id=self.object, user_id=self.request.user)
         return redirect(f"/materials/list/")
 
     # def save(self):
@@ -93,8 +95,8 @@ class PlatformListView(ListView):
 
 
 class PlatformDetailView(ListView):
-    def get(self, request, platform_id):
-        platform = get_object_or_404(Platform, id=platform_id)
+    def get(self, request, pk):
+        platform = get_object_or_404(Platform, id=pk)
         return render(request, "platform_details.html", {"platform": platform})
 
 
@@ -103,14 +105,25 @@ class PlatformCreateView(CreateView):
     fields = '__all__'
 
 
+# class PlatformUpdateView(View):
+#     def get(self, request):
+#         form = PlatformForm()
+#         return render(request, 'platform_update.html', {'form': form})
+#
+#     def post(self, request, platform_id):
+#         form = PlatformForm(request.POST)
+#         if form.is_valid():
+#             platform = Platform.objects.
+
+
 class AuthorListView(ListView):
     template_name = 'author_list.html'
     model = Author
 
 
 class AuthorDetailView(ListView):
-    def get(self, request, author_id):
-        author = get_object_or_404(Author, id=author_id)
+    def get(self, request, pk):
+        author = get_object_or_404(Author, id=pk)
         return render(request, "author_details.html", {"author": author})
 
 
@@ -170,3 +183,14 @@ class LogOutView(LogoutView):
 class ProfileView(View):
     def get(self, request):
         return redirect(f"/materials/list/")
+
+
+class PlatformUpdateView(UpdateView):
+    model = Platform
+    fields = '__all__'
+ #   template_name_suffix = '_update_form'
+    template_name = "letslearn/platform_update_form.html"
+    success_url = 'platform/list/'
+
+    # def get_object(self, queryset=None):
+    #     return Platform.objects.get(pk=self.request.GET.get('pk'))

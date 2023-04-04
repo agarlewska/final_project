@@ -5,7 +5,7 @@
       <ul>
           {% for platform in object_list %}
               <li>
-                  <a href="{% url 'platform_details' platform_id=platform.id %}">
+                  <a href="{% url 'platform_details' platform.id %}">
                       {{ platform}}</a>
               </li>
           {% endfor %}
