@@ -75,7 +75,7 @@ class MaterialCreateView(CreateView):
     # def save(self):
 
 
-class CategoryListView(ListView):
+class CategoryListView(LoginRequiredMixin, ListView):
     template_name = 'category_list.html'
     model = Category
 
