@@ -39,7 +39,7 @@ class MaterialListView(LoginRequiredMixin, ListView):
 #         return HttpResponse(template.render(context, request))
 
 
-class MaterialDetailView(View):
+class MaterialDetailView(LoginRequiredMixin, View):
         def get(self, request, pk):
             material = get_object_or_404(TrainingMaterials, id=pk)
             return render(request, "material_details.html", {"material": material})
@@ -62,7 +62,7 @@ class MaterialDetailView(View):
             return render(request, "material_details.html", {"material": material})
 
 
-class MaterialCreateView(CreateView):
+class MaterialCreateView(LoginRequiredMixin, CreateView):
     model = TrainingMaterials
     fields = '__all__'
 
@@ -80,7 +80,7 @@ class CategoryListView(LoginRequiredMixin, ListView):
     model = Category
 
 
-class CategoryCreateView(CreateView):
+class CategoryCreateView(LoginRequiredMixin, CreateView):
     model = Category
     fields = '__all__'
 
@@ -89,45 +89,34 @@ class MaterialCategoryListView(ListView):
     pass
 
 
-class PlatformListView(ListView):
+class PlatformListView(LoginRequiredMixin, ListView):
     template_name = 'platform_list.html'
     model = Platform
 
 
-class PlatformDetailView(ListView):
+class PlatformDetailView(LoginRequiredMixin, ListView):
     def get(self, request, pk):
         platform = get_object_or_404(Platform, id=pk)
         return render(request, "platform_details.html", {"platform": platform})
 
 
-class PlatformCreateView(CreateView):
+class PlatformCreateView(LoginRequiredMixin, CreateView):
     model = Platform
     fields = '__all__'
 
 
-# class PlatformUpdateView(View):
-#     def get(self, request):
-#         form = PlatformForm()
-#         return render(request, 'platform_update.html', {'form': form})
-#
-#     def post(self, request, platform_id):
-#         form = PlatformForm(request.POST)
-#         if form.is_valid():
-#             platform = Platform.objects.
-
-
-class AuthorListView(ListView):
+class AuthorListView(LoginRequiredMixin, ListView):
     template_name = 'author_list.html'
     model = Author
 
 
-class AuthorDetailView(ListView):
+class AuthorDetailView(LoginRequiredMixin, ListView):
     def get(self, request, pk):
         author = get_object_or_404(Author, id=pk)
         return render(request, "author_details.html", {"author": author})
 
 
-class AuthorCreateView(CreateView):
+class AuthorCreateView(LoginRequiredMixin, CreateView):
     model = Author
     fields = '__all__'
 
@@ -185,7 +174,7 @@ class ProfileView(View):
         return redirect(f"/materials/list/")
 
 
-class PlatformUpdateView(UpdateView):
+class PlatformUpdateView(LoginRequiredMixin, UpdateView):
     model = Platform
     fields = '__all__'
  #   template_name_suffix = '_update_form'
@@ -195,7 +184,7 @@ class PlatformUpdateView(UpdateView):
     # def get_object(self, queryset=None):
     #     return Platform.objects.get(pk=self.request.GET.get('pk'))
 
-class AuthorUpdateView(UpdateView):
+class AuthorUpdateView(LoginRequiredMixin, UpdateView):
     model = Author
     fields = '__all__'
  #   template_name_suffix = '_update_form'
