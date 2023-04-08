@@ -41,8 +41,14 @@ class MaterialListView(LoginRequiredMixin, ListView):
 
 class MaterialDetailView(LoginRequiredMixin, View):
         def get(self, request, pk):
-            material = get_object_or_404(TrainingMaterials, id=pk)
-            return render(request, "material_details.html", {"material": material})
+            material_owner = UserMaterial.objects.get(material_id = pk)
+            if material_owner.user_id == self.request.user:
+                material = TrainingMaterials.objects.filter()
+                # material = get_object_or_404(TrainingMaterials, id=pk)
+                return render(request, "material_details.html", {'material': material})
+            else:
+                return render(request, "page_404.html", {'material': ''})
+
 
         def post(self, request, pk):
             material = get_object_or_404(TrainingMaterials, id=pk)

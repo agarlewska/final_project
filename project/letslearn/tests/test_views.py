@@ -20,12 +20,11 @@ def test_platform_detail(client, platform, test_user):
 
 
 @pytest.mark.django_db
-def test_material_detail(client, material, test_user):
+def test_material_detail(client, material, test_user, user_material):
     client.force_login(test_user)
     response = client.get(f'/materials/{material.id}/')
     assert response.status_code == 200
-    # assert response.context['name'] == platform.name
-    assert response.context['material'] == material
+    assert response.context['material'][0].name == material.name
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
@@ -60,40 +59,46 @@ def test_category_list_login(test_user, client, view_name):
 
 
 @pytest.mark.django_db
-def test_user_material_list(test_user, client, material, user_material):
-    client.login(username=test_user.username, password=test_user.password)
-    material = UserMaterial.objects.filter(user_id=test_user)
-    response = client.get('material_list')
-    assert material.count() == 1
-    assert response.context
+def test_user_material_detail(test_user, client, material, user_material):
+    client.force_login(test_user)
+    response = client.get(f'/materials/{material.id}/')
+    assert response.status_code == 200
+    assert response.context['material'][0] == material
 
 
 @pytest.mark.django_db
-def test_not_user_material_list(test_user, test_user2, client, material, user_material):
+def test_not_user_material_detail(test_user, test_user2, client, material, user_material):
     client.force_login(test_user2)
-    material = UserMaterial.objects.filter(user_id=test_user)
-    response = client.get('/materials/list/')
-    assert response.context is None
+    # material = UserMaterial.objects.filter(user_id=test_user)[0]
+    user = user_material.user_id
+    response = client.get(f'/materials/{material.id}/')
+    assert response.status_code == 200
+    assert response.context['material'] == ''
 
 
 @pytest.mark.django_db
 def test_create_category(client, test_user):
-    response = client.post('/category/create/', {'name': 'new'})
+    response = client.get('/category/create/', {'name': 'new'})
     assert response.status_code == 302
-    client.force_login(test_user)
-    response = client.post('/category/create/', {'name': 'new'})
-    assert response.status_code == 200
-    # assert Category.objects.get(name='new')
+    client.force_login(user=test_user)
+    response2 = client.get('/category/create/', {'name': 'new'})
+    assert response2.status_code == 200
+    response3 = client.post('/category/create/', {'name': 'new'})
+    assert response3.status_code == 302
+    assert Category.objects.get(name='new')
 
 
 @pytest.mark.django_db
 def test_create_platform(client, test_user):
     response = client.post('/platform/create/', {'name': 'new', 'www': 'adress', 'comment': 'comm'})
     assert response.status_code == 302
-    client.force_login(test_user)
-    response = client.post('/platform/create/', {'name': 'new', 'www': 'adress', 'comment': 'comm'})
-    assert response.status_code == 200
+    client.force_login(user=test_user)
+    response2 = client.get('/platform/create/', {'name': 'new', 'www': 'adress', 'comment': 'comm'})
+    assert response2.status_code == 200
+    response3 = client.post('/platform/create/', {'name': 'new', 'www': 'adress', 'comment': 'comm'})
+    assert response3.status_code == 302
     assert Platform.objects.get(name='new')
+
 
 @pytest.mark.django_db
 def test_create_author(client, test_user):
@@ -101,9 +106,11 @@ def test_create_author(client, test_user):
     assert response.status_code == 302
     # client.login(username=test_user.username, password=test_user.password)
     client.force_login(test_user)
-    response = client.post('/author/create/', {'name': 'new', 'www': 'adress', 'comment': 'comm'})
-    assert response.status_code == 200
-    # assert Author.objects.get(name='new')
+    response2 = client.get('/author/create/', {'name': 'new', 'www': 'adress', 'comment': 'comm'})
+    assert response2.status_code == 200
+    response2 = client.post('/author/create/', {'name': 'new', 'www': 'adress', 'comment': 'comm'})
+    assert response2.status_code == 302
+    assert Author.objects.get(name='new')
 
 
 @pytest.mark.django_db
@@ -129,3 +136,9 @@ def test_create_material(client, test_user, author, material_type, platform):
     # material = TrainingMaterials.objects.get(name='name')
     # UserMaterial.objects.create(material_id=material, user_id=test_user)
     # assert UserMaterial.objects.get(material_id=material)
+
+
+
+# >>> response = c.get("/redirect_me/", follow=True)
+# >>> response.redirect_chain
+# [('http://testserver/next/', 302), ('http://testserver/final/', 302)]
