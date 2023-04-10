@@ -14,12 +14,12 @@
     <p><b>Expiration date: </b>{{ material.expiration_date }}</p>
         {% endif %}
     <p><b>Is finished: </b>{{ material.is_finished }}
-            <form action="" method="POST">
+            <form action="" method="POST" class="mb-3">
                 {% csrf_token %}
                 {% if material.is_finished %}
-                    <input type="submit" name="unfinished" value="check as unfinished">
+                    <input type="submit" class="btn btn-primary" name="unfinished" value="check as unfinished">
                 {% else %}
-                    <input type="submit" name="finished" value="check as finished">
+                    <input type="submit" class="btn btn-primary" name="finished" value="check as finished">
                 {% endif %}
             </form>
     </p>
@@ -33,12 +33,12 @@
         </ul>
 
     <p><b>Material type: </b>{{ material.material_type }}</p>
-    <form action='' method="POST">
+    <form action='' method="POST" class="mb-3">
         {% csrf_token %}
         {% if material.is_archived %}
-            <input type="submit" name="restore" value="restore">
+            <input type="submit" class="btn btn-primary" name="restore" value="restore">
         {% else %}
-            <input type="submit" name="archive" value="archive">
+            <input type="submit" class="btn btn-primary" name="archive" value="archive">
         {% endif %}
     </form>
 {% endblock %}

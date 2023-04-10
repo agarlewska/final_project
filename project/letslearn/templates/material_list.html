@@ -2,7 +2,7 @@
 
 {%  block content %}
   <h2>Your training materials</h2>
-    <h3>Trainig materials close to expiration date</h3>
+    <p>Trainig materials close to expiration date</p>
       <ul>
           {% for material in materials %}
             {% if material.material_id.is_time_limited %}
@@ -28,8 +28,7 @@
 <!--          {% endif %}-->
 <!--      </ul>-->
 
-    <h3>All trainig materials</h3>
-{{ materials }}
+    <p>All trainig materials</p>
       <ul>
           {% for material in materials %}
               <li>
