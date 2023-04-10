@@ -2,10 +2,38 @@
 
 {%  block content %}
   <h2>Your training materials</h2>
+    <h3>Trainig materials close to expiration date</h3>
       <ul>
-          {% for material in object_list %}
+          {% for material in materials %}
+            {% if material.material_id.is_time_limited %}
+                {% if material.material_id.expiration_date <= exp_date %}
               <li>
                   <a href="{% url 'material_details' material.material_id.id %}">
+                      {{ material.material_id }}</a>
+              </li>
+                {% endif %}
+            {% endif %}
+          {% endfor %}
+      </ul>
+<!--      <ul>-->
+<!--          {% if not materials_near_end %}-->
+<!--                <li> No training materials to show. </li>-->
+<!--          {% else %}-->
+<!--              {% for material_near_end in materials_near_end %}-->
+<!--                  <li>-->
+<!--                      <a href="{% url 'material_details' material.material_id.id %}">-->
+<!--                          {{ material_near_end.material_id }}</a>-->
+<!--                  </li>-->
+<!--              {% endfor %}-->
+<!--          {% endif %}-->
+<!--      </ul>-->
+
+    <h3>All trainig materials</h3>
+{{ materials }}
+      <ul>
+          {% for material in materials %}
+              <li>
+<!--                  <a href="{% url 'material_details' material.material_id.id %}">-->
                       {{ material.material_id }}</a>
               </li>
           {% endfor %}

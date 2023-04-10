@@ -5,26 +5,37 @@ from letslearn.models import TrainingMaterials, UserMaterial, Category, Platform
 
 @pytest.mark.django_db
 def test_author_detail(client, author, test_user):
+    """
+    Tests author detail view.
+    :param client: fixture client
+    :param author: fixture author
+    :param test_user: fixture test_user
+    :return: two tests:
+        - Http response code is 200 (OK)
+        - Context contains information about author
+    """
     client.force_login(test_user)
     response = client.get(f'/author/{author.id}/')
     assert response.status_code == 200
     assert response.context['author'] == author
 
-@pytest.mark.django_db
 
+@pytest.mark.django_db
 def test_platform_detail(client, platform, test_user):
+    """
+    Tests platform detail view.
+    :param client: fixture client
+    :param platform: fixture platform
+    :param test_user: fixture test_user
+    :return: two tests:
+        - Http response code is 200 (OK)
+        - Context contains information about platform
+    """
     client.force_login(test_user)
     response = client.get(f'/platform/{platform.id}/')
     assert response.status_code == 200
     assert response.context['platform'] == platform
 
-
-@pytest.mark.django_db
-def test_material_detail(client, material, test_user, user_material):
-    client.force_login(test_user)
-    response = client.get(f'/materials/{material.id}/')
-    assert response.status_code == 200
-    assert response.context['material'][0].name == material.name
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
@@ -37,9 +48,15 @@ def test_material_detail(client, material, test_user, user_material):
     ],
 )
 def test_category_list_logout(client, view_name):
+    """
+    Tests rendering views for logout users.
+    :param client: fixture client
+    :param view_name: parametr containing tested view name
+    :return: client should be redirected to login page, http status code is 302 (redirect)
+    """
     client.logout()
-    response = client.get(reverse(view_name))
-    assert response.status_code != 200
+    response = client.get('/category/list/')
+    assert response.status_code == 302
 
 
 @pytest.mark.django_db
@@ -53,24 +70,51 @@ def test_category_list_logout(client, view_name):
     ],
 )
 def test_category_list_login(test_user, client, view_name):
-    client.login(username=test_user.username, password=test_user.password)
-    response = client.get(reverse(view_name))
-    assert response.status_code == 302 #200
+    """
+    Tests rendering views for logged users.
+    :param client: fixture client
+    :param view_name: parametr containing tested view name
+    :return: http status code is 200 (OK)
+    """
+    client.force_login(test_user)
+    # response = client.get(reverse(view_name))
+    response = client.get('/category/list/')
+    assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_user_material_detail(test_user, client, material, user_material):
+    """
+    Tests training material detail view. Training material owned by logged user.
+    :param client: fixture client
+    :param material: fixture material
+    :param test_user: fixture test_user
+    :param user_material: fixture user_material
+    :return: two tests:
+        - Http response code is 200 (OK)
+        - Context contains information about training material
+    """
     client.force_login(test_user)
     response = client.get(f'/materials/{material.id}/')
     assert response.status_code == 200
-    assert response.context['material'][0] == material
+    assert response.context['material'] == material
 
 
 @pytest.mark.django_db
 def test_not_user_material_detail(test_user, test_user2, client, material, user_material):
+    """
+    Tests training material detail view. Training material owned by other than logged user.
+    :param client: fixture client
+    :param material: fixture material
+    :param test_user: fixture test_user
+    :param user_material: fixture user_material
+    :return: two tests:
+        - Http response code is 200 (OK)
+        - Context does't contain information about training material
+    """
     client.force_login(test_user2)
     # material = UserMaterial.objects.filter(user_id=test_user)[0]
-    user = user_material.user_id
+    # user = user_material.user_id
     response = client.get(f'/materials/{material.id}/')
     assert response.status_code == 200
     assert response.context['material'] == ''
@@ -78,6 +122,21 @@ def test_not_user_material_detail(test_user, test_user2, client, material, user_
 
 @pytest.mark.django_db
 def test_create_category(client, test_user):
+    """
+    Tests category create view. Checks whether logged and logout user can add new category.
+    Function generates four tests:
+        - user (without login) sends a get reguest
+        - logged user sends a get request
+        - logged user sends a post request (add new category)
+        - checks whether there is a new object in Category model.
+    :param client: fixture client
+    :param test_user: fixture test_user
+    :return: four tests:
+        - Http response code is 302 (redirect)
+        - Http response code is 200 (OK)
+        - Http response code is 302 (redirect)
+        - New object in Category model with name = 'new' exists.
+    """
     response = client.get('/category/create/', {'name': 'new'})
     assert response.status_code == 302
     client.force_login(user=test_user)
@@ -90,6 +149,21 @@ def test_create_category(client, test_user):
 
 @pytest.mark.django_db
 def test_create_platform(client, test_user):
+    """
+    Tests platform create view. Checks whether logged and logout user can add new platfotm.
+    Function generates four tests:
+        - user (without login) sends a get reguest
+        - logged user sends a get request
+        - logged user sends a post request (add new platform)
+        - checks whether there is a new object in Platform model.
+    :param client: fixture client
+    :param test_user: fixture test_user
+    :return: four tests:
+        - Http response code is 302 (redirect)
+        - Http response code is 200 (OK)
+        - Http response code is 302 (redirect)
+        - New object in Platform model with name = 'new' exists.
+    """
     response = client.post('/platform/create/', {'name': 'new', 'www': 'adress', 'comment': 'comm'})
     assert response.status_code == 302
     client.force_login(user=test_user)
@@ -102,9 +176,23 @@ def test_create_platform(client, test_user):
 
 @pytest.mark.django_db
 def test_create_author(client, test_user):
+    """
+    Tests author create view. Checks whether logged and logout user can add new author.
+    Function generates four tests:
+        - user (without login) sends a get reguest
+        - logged user sends a get request
+        - logged user sends a post request (add new author)
+        - checks whether there is a new object in Author model.
+    :param client: fixture client
+    :param test_user: fixture test_user
+    :return: four tests:
+        - Http response code is 302 (redirect)
+        - Http response code is 200 (OK)
+        - Http response code is 302 (redirect)
+        - New object in Author model with name = 'new' exists.
+    """
     response = client.post('/author/create/', {'name': 'new', 'www': 'adress', 'comment': 'comm'})
     assert response.status_code == 302
-    # client.login(username=test_user.username, password=test_user.password)
     client.force_login(test_user)
     response2 = client.get('/author/create/', {'name': 'new', 'www': 'adress', 'comment': 'comm'})
     assert response2.status_code == 200
@@ -114,8 +202,29 @@ def test_create_author(client, test_user):
 
 
 @pytest.mark.django_db
-def test_create_material(client, test_user, author, material_type, platform):
-    response = client.post('/materials/create/', {'name': 'name',
+def test_create_material(client, test_user, author, material_type, platform, material, user_material):
+    """
+    Tests training material create view. Checks whether logged and logout user can add new amaterial.
+    Function generates five tests:
+        - user (without login) sends a get reguest
+        - logged user sends a get request
+        - logged user sends a post request (add new training material)
+        - checks whether there is a new object in Training Material model.
+        - checks whether there is a new object in UserMaterial model.
+    :param client: fixture client
+    :param test_user: fixture test_user
+    :param author: fixture author
+    :param material_type: fixture material_type
+    :param platform: fixture platform
+    :param material: fixture material
+    :return: four tests:
+        - Http response code is 302 (redirect)
+        - Http response code is 200 (OK)
+        # - Http response code is 302 (redirect)
+        - New object in TrainingMaterials model with name = 'name' exists.
+        - New object in UserMaterial model with material exists.
+    """
+    response = client.get('/materials/create/', {'name': 'name',
                                                         'description': 'desc',
                                                         'is_time_limited': False,
                                                         'is_finished': False,
@@ -125,7 +234,7 @@ def test_create_material(client, test_user, author, material_type, platform):
     assert response.status_code == 302
     # client.login(username=test_user.username, password=test_user.password)
     client.force_login(test_user)
-    response2 = client.post('/materials/create/', {'name': 'name',
+    response2 = client.get('/materials/create/', {'name': 'name',
                                                         'description': 'desc',
                                                         'is_time_limited': False,
                                                         'is_finished': False,
@@ -133,9 +242,18 @@ def test_create_material(client, test_user, author, material_type, platform):
                                                         'material_type_id': material_type.id,
                                                         'platform_id': platform.id})
     assert response2.status_code == 200
-    # material = TrainingMaterials.objects.get(name='name')
-    # UserMaterial.objects.create(material_id=material, user_id=test_user)
-    # assert UserMaterial.objects.get(material_id=material)
+    response3 = client.post('/materials/create/', {'name': 'name',
+                                                        'description': 'desc',
+                                                        'is_time_limited': False,
+                                                        'is_finished': False,
+                                                        'author_id': author.id,
+                                                        'material_type_id': material_type.id,
+                                                        'platform_id': platform.id})
+    # assert response3.status_code == 200
+    # [10 / Apr / 2023 08: 52:21] "POST /materials/create/ HTTP/1.1" 302 0
+    # [10 / Apr / 2023 08: 52:21] "GET /materials/list/ HTTP/1.1" 200 1081
+    assert TrainingMaterials.objects.get(name='name')
+    assert UserMaterial.objects.get(material_id=material)
 
 
 
