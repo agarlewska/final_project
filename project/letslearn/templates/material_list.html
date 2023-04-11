@@ -1,5 +1,6 @@
 {%  extends 'base.html' %}
-
+{% load static %}
+<!--<script src="{% static 'app.js' %}"></script>-->
 {%  block content %}
   <h2>Your training materials</h2>
     <p>Trainig materials close to expiration date</p>
@@ -8,31 +9,19 @@
             {% if material.material_id.is_time_limited %}
                 {% if material.material_id.expiration_date <= exp_date %}
               <li>
-                  <a href="{% url 'material_details' material.material_id.id %}">
+                  <a href="{% url 'material_details' material.material_id.id %}" class="text-decoration-none">
                       {{ material.material_id }}</a>
               </li>
                 {% endif %}
             {% endif %}
           {% endfor %}
       </ul>
-<!--      <ul>-->
-<!--          {% if not materials_near_end %}-->
-<!--                <li> No training materials to show. </li>-->
-<!--          {% else %}-->
-<!--              {% for material_near_end in materials_near_end %}-->
-<!--                  <li>-->
-<!--                      <a href="{% url 'material_details' material.material_id.id %}">-->
-<!--                          {{ material_near_end.material_id }}</a>-->
-<!--                  </li>-->
-<!--              {% endfor %}-->
-<!--          {% endif %}-->
-<!--      </ul>-->
 
     <p>All trainig materials</p>
       <ul>
           {% for material in materials %}
               <li>
-<!--                  <a href="{% url 'material_details' material.material_id.id %}">-->
+                  <a href="{% url 'material_details' material.material_id.id %}" class="text-decoration-none">
                       {{ material.material_id }}</a>
               </li>
           {% endfor %}

@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.test import Client
 from letslearn.models import Platform, Category, Author, MaterialType, TrainingMaterials, UserMaterial
 
-
 @pytest.fixture
 def client():
     client = Client()

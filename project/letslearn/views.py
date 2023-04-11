@@ -51,7 +51,11 @@ class MaterialListView(LoginRequiredMixin, View):
                               # and (material.material_id.expiration_date - date.today()).days <= 14
                               ]
         exp_date = date.today() + timedelta(days=14)
-        return render(request, 'material_list.html', {'materials': materials, 'exp_date': exp_date})#, 'materials_near_end': materials_near_end})
+        categories = Category.objects.all()
+        return render(request, 'material_list.html',
+                      {'materials': materials,
+                       'exp_date': exp_date,
+                       'categories': categories})#, 'materials_near_end': materials_near_end})
 
 #       return UserMaterial.objects.filter(Q(user_id=self.request.user) & Q(is_archived=False))
 # def planlist(request):

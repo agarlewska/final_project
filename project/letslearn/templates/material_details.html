@@ -17,9 +17,9 @@
             <form action="" method="POST" class="mb-3">
                 {% csrf_token %}
                 {% if material.is_finished %}
-                    <input type="submit" class="btn btn-primary" name="unfinished" value="check as unfinished">
+                    <input type="submit" class="btn btn-outline-primary" name="unfinished" value="check as unfinished">
                 {% else %}
-                    <input type="submit" class="btn btn-primary" name="finished" value="check as finished">
+                    <input type="submit" class="btn btn-outline-primary" name="finished" value="check as finished">
                 {% endif %}
             </form>
     </p>
@@ -36,9 +36,12 @@
     <form action='' method="POST" class="mb-3">
         {% csrf_token %}
         {% if material.is_archived %}
-            <input type="submit" class="btn btn-primary" name="restore" value="restore">
+            <input type="submit" class="btn btn-outline-primary" name="restore" value="restore">
         {% else %}
-            <input type="submit" class="btn btn-primary" name="archive" value="archive">
+            <input type="submit" class="btn btn-outline-primary" name="archive" value="archive">
         {% endif %}
     </form>
+  <p>
+    <a href="{% url 'material_list' %}" style="--bs-link-opacity: .5" class="text-decoration-none">Back to list of training materials</a>
+  </p>
 {% endblock %}

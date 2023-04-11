@@ -148,6 +148,22 @@ def test_create_category(client, test_user):
 
 
 @pytest.mark.django_db
+def test_create_category_count(client, test_user):
+    client.force_login(test_user)
+    categories_count = Category.objects.count()
+    new_category = {'name': 'new category'}
+    response = client.post("/category/create/", new_category)
+    assert response.status_code == 302
+    assert Category.objects.count() == categories_count + 1
+    # for key, value in new_category.items():
+    #     assert key in response.data
+    #     assert response.data[key] == value
+
+    # for field in ("title", "year", "description", "director", "actors"):
+    #     assert field in response.data
+
+
+@pytest.mark.django_db
 def test_create_platform(client, test_user):
     """
     Tests platform create view. Checks whether logged and logout user can add new platfotm.
@@ -172,6 +188,30 @@ def test_create_platform(client, test_user):
     response3 = client.post('/platform/create/', {'name': 'new', 'www': 'adress', 'comment': 'comm'})
     assert response3.status_code == 302
     assert Platform.objects.get(name='new')
+
+
+@pytest.mark.django_db
+def test_update_platform(client, test_user, platform):
+    """
+    Tests platform update view.
+    Function generates four tests:
+        - user (without login) sends a get reguest
+        - logged user sends a get request
+        - logged user sends a post request (add new platform)
+        - checks whether there is a new object in Platform model.
+    :param client: fixture client
+    :param test_user: fixture test_user
+    :return: four tests:
+        - Http response code is 302 (redirect)
+        - Http response code is 200 (OK)
+        - Http response code is 302 (redirect)
+        - New object in Platform model with name = 'new' exists.
+    """
+    client.force_login(user=test_user)
+    response = client.post('/platform/update/{platform.id}/', {'name': platform.name, 'www': platform.www, 'comment': 'new comm'})
+    #assert response.status_code == 200
+    platform_updated = Platform.objects.get(id=platform.id)
+    assert platform_updated.comment == 'aaa'
 
 
 @pytest.mark.django_db
@@ -254,6 +294,7 @@ def test_create_material(client, test_user, author, material_type, platform, mat
     # [10 / Apr / 2023 08: 52:21] "GET /materials/list/ HTTP/1.1" 200 1081
     assert TrainingMaterials.objects.get(name='name')
     assert UserMaterial.objects.get(material_id=material)
+
 
 
 
