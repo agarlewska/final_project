@@ -17,7 +17,7 @@ def author():
 
 @pytest.fixture
 def platform():
-    return Platform.objects.create(name='name', www='adress', comment='many comments')
+    return Platform.objects.create(name='platform_name', www='adress', comment='many comments')
 
 
 @pytest.fixture
@@ -31,7 +31,7 @@ def material_type():
 
 @pytest.fixture
 def material(author, material_type, platform):
-    return TrainingMaterials.objects.create(name='name', is_time_limited=False, is_finished=False, author_id=author.id, material_type_id=material_type.id, platform_id=platform.id)
+    return TrainingMaterials.objects.create(name='material_name', is_time_limited=False, is_finished=False, author_id=author.id, material_type_id=material_type.id, platform_id=platform.id)
 
 
 @pytest.fixture
